@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<DemeritDataModel>? demeritData;
+  Future<List<dynamic>>? demeritData;
 
   @override
   void initState() {
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Flexible(
                       child: SingleChildScrollView(
-                        child: FutureBuilder<DemeritDataModel>(
+                        child: FutureBuilder<List<dynamic>>(
                           future: demeritData,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -105,17 +105,17 @@ class _HomePageState extends State<HomePage> {
                                 return const Text("Empty");
                               }
                             }
-                            DemeritDataModel? demerit = snapshot.data;
+                            List<dynamic>? demerit = snapshot.data;
                             return ListView.builder(
-                                itemCount:9,
+                                itemCount: snapshot.data?.length,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (BuildContext context, int index) {
                                   return demeritBox(
-                                      demerit?.date,
-                                      demerit?.offence,
-                                      demerit?.points,
-                                      demerit?.status.toString());
+                                      demerit?[index].date,
+                                      demerit?[index].offence,
+                                      demerit?[index].points,
+                                      demerit?[index].status.toString());
                                 });
                           },
                         ),
@@ -146,11 +146,11 @@ class demeritBox extends StatelessWidget {
   final String? status;
 
   Color switchWithString(String status) {
-    if (status.toLowerCase() == 'active') {
-      return Colors.amber;
-    } else if (status.toLowerCase() == 'deleted') {
+    if (status.toLowerCase() == 'status.active') {
+      return Colors.green;
+    } else if (status.toLowerCase() == 'status.deleted') {
       return Colors.red;
-    } else if (status.toLowerCase() == 'resolved') {
+    } else if (status.toLowerCase() == 'status.resolved') {
       return Colors.blue;
     } else
       return Colors.black;
@@ -177,6 +177,7 @@ class demeritBox extends StatelessWidget {
                 children: [
                   Text(
                     date.toString(),
+                    overflow: TextOverflow.clip,
                     style:
                         TextStyles().greyTextStyle400().copyWith(fontSize: 12),
                   ),
@@ -190,10 +191,10 @@ class demeritBox extends StatelessWidget {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(15))),
                     child: Text(
-                      status!,
-                      style: TextStyles()
-                          .blackTextStyle400()
-                          .copyWith(color: switchWithString(status!), fontSize: 12),
+                      status!.replaceAll(RegExp(r'Status.'), '').toLowerCase(),
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyles().blackTextStyle400().copyWith(
+                          color: switchWithString(status!), fontSize: 12),
                     ),
                   ),
                   // Text(
@@ -210,11 +211,13 @@ class demeritBox extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    offence!,
-                    style: TextStyles().defaultText(
-                        16, FontWeight.w500, themes().secondaryColor),
-                    overflow: TextOverflow.ellipsis,
+                  Flexible(
+                    child: Text(
+                      offence!,
+                      style: TextStyles().defaultText(
+                          16, FontWeight.w500, themes().secondaryColor),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   Text(
                     '${points} points',

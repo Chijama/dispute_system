@@ -7,12 +7,13 @@ import 'dart:developer';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-class Service{
-  Future<DemeritDataModel> getDemeritData(BuildContext context) async{
-     try {
+class Service {
+  Future<List<DemeritDataModel>> getDemeritData(BuildContext context) async {
+    try {
       var client = http.Client();
 
-      var url = Uri.parse("https://sddms-backend-production.up.railway.app/api/v1/student/demerits/all");
+      var url = Uri.parse(
+          "https://sddms-backend-production.up.railway.app/api/v1/student/demerits/all");
       var loginState = Provider.of<LoginProvider>(context, listen: false);
       var token = loginState.token;
       // log("Login state $token");
@@ -26,16 +27,23 @@ class Service{
       );
       // log("response ${response.body}");
       if (response.statusCode == 200) {
-        final services = DemeritDataModel.fromJson(json.decode(response.body));
+        final services = json.decode(response.body);
         //log("returned ${services.toJson()}");
-        return services;
+
+        List<DemeritDataModel> dataList = services
+            .map<DemeritDataModel>(
+                (element) => DemeritDataModel.fromJson(element))
+            .toList();
+        print(dataList);
+        return dataList;
       } else {
         // log("failed to fetch users =>${response.statusCode} => ${response.body}");
-        return DemeritDataModel();
+        return [];
       }
     } catch (e) {
       log("catch error from get user => $e");
-      return DemeritDataModel();
+
+      return [];
     }
   }
 }

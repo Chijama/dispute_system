@@ -33,7 +33,7 @@ class _DisputeWidgetState extends State<DisputeWidget> {
             ));
     Response r;
     Map<String, dynamic> body = {
-      'demeritId':demeritId,
+     // 'demeritId':demeritId,
       'reason': reasonController.text
     };
   }
