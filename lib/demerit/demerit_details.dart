@@ -178,20 +178,11 @@ class _DemeritDetailsState extends State<DemeritDetails> {
   }
 
   Widget demeritDetail(String label, TextEditingController controller) {
-    return TextFormField(
-      readOnly: true,
-      style: TextStyles().blackTextStyle700(),
+    return MainTextInput(
+      mainText: label,
       controller: controller,
-      decoration: InputDecoration(
-          // focusedBorder: OutlineInputBorder(
-          //     borderSide: BorderSide(
-          //         color: AppColor().primaryColor)),
-
-          labelText: label,
-          labelStyle: TextStyles().greyTextStyle400().copyWith(fontSize: 18)
-
-          // hintText: 'Folder Title'
-          ),
+      readOnly: true,
+      isFilled: true,
     );
   }
 }
