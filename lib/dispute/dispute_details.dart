@@ -1,9 +1,11 @@
+import 'package:dispute_system/dispute/dispute_model.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:dispute_system/textbox.dart';
 
 class DisputeDetails extends StatefulWidget {
-  const DisputeDetails({super.key});
+  DisputeDataModel? data;
+  DisputeDetails({super.key, this.data});
 
   @override
   State<DisputeDetails> createState() => _DisputeDetailsState();

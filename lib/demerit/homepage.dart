@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   getData() async {
-    demeritData = Service().getDemeritData(context);
+    demeritData = Services().getDemeritData(context);
     setState(() {});
   }
 

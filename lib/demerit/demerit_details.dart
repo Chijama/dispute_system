@@ -1,10 +1,13 @@
 import 'package:dispute_system/demerit/demerit_model.dart';
+import 'package:dispute_system/login/login_provider.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:dispute_system/textbox.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'dart:developer';
+
+import 'package:provider/provider.dart';
 
 class DemeritDetails extends StatefulWidget {
   DemeritDataModel? data;
@@ -72,14 +75,15 @@ class _DemeritDetailsState extends State<DemeritDetails> {
       'reason': reasonController.text
     };
     print(reasonController.text);
+    var tokenState = Provider.of<LoginProvider>(context, listen: false);
+    var token = tokenState.token;
     r = await post(
       Uri.parse(
           "https://sddms-backend-production.up.railway.app/api/v1/student/dispute-demerit"),
       body: body,
       headers: {
-        "Authorization":
-            "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJud2FpZ2JvMjA5NkBzdHVkZW50LmJhYmNvY2suZWR1Lm5nIiwiaXNzIjoiR2lrby1GWVAiLCJpYXQiOjE2ODE3NTcxODksImp0aSI6IjE3IiwiZXhwIjoxNjgyMzYxOTg5fQ.VmTnVFoKNXTsybNi-gQaufsO4K16MTpOOEssBjHgJYvK_qX5D03mpGso33EJFn9CQPMrZaieL_h2lvH5E-b7oA",
-       // 'Content-type': 'application/json',
+        "Authorization": "Bearer $token",
+        // 'Content-type': 'application/json',
         "Accept": "application/json",
       },
     );
