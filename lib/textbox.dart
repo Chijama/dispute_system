@@ -16,6 +16,7 @@ class MainTextInput extends StatelessWidget {
       this.isFilled,
       this.readOnly,
       this.icon,
+      this.validator,
       this.divider,
       this.prefixText});
   final String? labelText;
@@ -31,7 +32,7 @@ class MainTextInput extends StatelessWidget {
   final VoidCallback? onTap;
   final bool? readOnly;
   final bool? obscureText;
-
+final String? Function(String?)? validator;
   final bool? divider;
   final TextInputType? keyboardType;
   final int? maxLength;
@@ -49,6 +50,8 @@ class MainTextInput extends StatelessWidget {
             height: 8,
           ),
           TextFormField(
+            validator: validator,
+            controller: controller,
             obscureText: obscureText!,
             readOnly: readOnly ?? false,
             maxLength: maxLength,

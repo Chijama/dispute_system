@@ -1,8 +1,10 @@
 import 'package:dispute_system/demerit_details.dart';
+import 'package:dispute_system/login/login_provider.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,6 +16,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    var state =  Provider.of< LoginProvider>(context, listen: false);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: themes().whiteColor,
@@ -31,12 +35,12 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Hello Chidera Chijama,",
+                        "Hello ${state.firstName},",
                         style: TextStyles().defaultText(
                             20, FontWeight.bold, themes().secondaryColor),
                       ),
                       Text(
-                        "100 points",
+                        "${state.demeritPoints} points",
                         style: TextStyles()
                             .darkGreyTextStyle400()
                             .copyWith(color: Colors.blue),
@@ -47,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                     height: 12,
                   ),
                   Text(
-                    'Matric No: 18CG...',
+                    'Matric No: ${state.matricNo}',
                     style: TextStyles().darkGreyTextStyle400(),
                   ),
                   const SizedBox(
