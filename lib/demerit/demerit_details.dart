@@ -47,7 +47,6 @@ class _DemeritDetailsState extends State<DemeritDetails> {
         TextEditingController(text: widget.data!.level.toString());
     departmentController =
         TextEditingController(text: widget.data!.department.toString());
-
     // TODO: implement initState
     print(widget.data!.department);
     super.initState();
@@ -158,6 +157,8 @@ class _DemeritDetailsState extends State<DemeritDetails> {
                                   ),
                                   ElevatedButton(
                                       onPressed: () {
+    reasonController.clear();
+
                                         Navigator.pop(context);
                                         dispute();
                                       },
