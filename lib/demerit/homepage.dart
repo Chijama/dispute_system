@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dispute_system/demerit/demerit_details.dart';
 import 'package:dispute_system/demerit/demerit_model.dart';
+import 'package:dispute_system/demerit/demerit_provider.dart';
 import 'package:dispute_system/login/login_provider.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<List<dynamic>>? demeritData;
+  Future<List<DemeritDataModel>>? demeritData;
 
   @override
   void initState() {
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Flexible(
                       child: SingleChildScrollView(
-                        child: FutureBuilder<List<dynamic>>(
+                        child: FutureBuilder<List<DemeritDataModel>>(
                           future: demeritData,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -105,17 +106,30 @@ class _HomePageState extends State<HomePage> {
                                 return const Text("Empty");
                               }
                             }
+                            var state = Provider.of<DemeritProvider>(context,
+                                listen: false);
+                            state.getDemerit(snapshot.data!);
                             List<dynamic>? demerit = snapshot.data;
                             return ListView.builder(
                                 itemCount: snapshot.data?.length,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (BuildContext context, int index) {
-                                  return demeritBox(
-                                      demerit?[index].date,
-                                      demerit?[index].offence,
-                                      demerit?[index].points,
-                                      demerit?[index].status.toString());
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute<Widget>(
+                                              builder: (BuildContext context) =>
+                                                  DemeritDetails(
+                                                      data: demerit![index])));
+                                    },
+                                    child: demeritBox(
+                                        demerit?[index].date,
+                                        demerit?[index].offence,
+                                        demerit?[index].points,
+                                        demerit?[index].status.toString()),
+                                  );
                                 });
                           },
                         ),
@@ -140,17 +154,17 @@ class demeritBox extends StatelessWidget {
     this.status, {
     super.key,
   });
-  final DateTime? date;
+  final String? date;
   final String? offence;
   final int? points;
   final String? status;
 
   Color switchWithString(String status) {
-    if (status.toLowerCase() == 'status.active') {
+    if (status.toLowerCase() == 'active') {
       return Colors.green;
-    } else if (status.toLowerCase() == 'status.deleted') {
+    } else if (status.toLowerCase() == 'deleted') {
       return Colors.red;
-    } else if (status.toLowerCase() == 'status.resolved') {
+    } else if (status.toLowerCase() == 'resolved') {
       return Colors.blue;
     } else
       return Colors.black;
@@ -158,77 +172,68 @@ class demeritBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute<Widget>(
-                builder: (BuildContext context) => const DemeritDetails()));
-      },
-      child: Card(
-        elevation: 4,
-        child: Container(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    date.toString(),
-                    overflow: TextOverflow.clip,
-                    style:
-                        TextStyles().greyTextStyle400().copyWith(fontSize: 12),
-                  ),
+    return Card(
+      elevation: 4,
+      child: Container(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  date.toString(),
+                  overflow: TextOverflow.clip,
+                  style: TextStyles().greyTextStyle400().copyWith(fontSize: 12),
+                ),
 
-                  Container(
-                    alignment: Alignment.center,
-                    height: 31,
-                    width: 65,
-                    decoration: BoxDecoration(
-                        color: switchWithString(status!).withOpacity(0.2),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(15))),
-                    child: Text(
-                      status!.replaceAll(RegExp(r'Status.'), '').toLowerCase(),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyles().blackTextStyle400().copyWith(
-                          color: switchWithString(status!), fontSize: 12),
-                    ),
+                Container(
+                  alignment: Alignment.center,
+                  height: 31,
+                  width: 65,
+                  decoration: BoxDecoration(
+                      color: switchWithString(status!).withOpacity(0.2),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(15))),
+                  child: Text(
+                    status!.replaceAll(RegExp(r'Status.'), '').toLowerCase(),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyles().blackTextStyle400().copyWith(
+                        color: switchWithString(status!), fontSize: 12),
                   ),
-                  // Text(
-                  //   'ACTIVE',
-                  //   style: TextStyles().blackTextStyle400().copyWith(
-                  //       fontWeight: FontWeight.w500,
-                  //       color: Colors.green),
-                  // )
-                ],
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      offence!,
-                      style: TextStyles().defaultText(
-                          16, FontWeight.w500, themes().secondaryColor),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                ),
+                // Text(
+                //   'ACTIVE',
+                //   style: TextStyles().blackTextStyle400().copyWith(
+                //       fontWeight: FontWeight.w500,
+                //       color: Colors.green),
+                // )
+              ],
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    offence!,
+                    style: TextStyles().defaultText(
+                        16, FontWeight.w500, themes().secondaryColor),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  Text(
-                    '${points} points',
-                    style: TextStyles()
-                        .darkGreyTextStyle400()
-                        .copyWith(fontSize: 12),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                Text(
+                  '${points} points',
+                  style: TextStyles()
+                      .darkGreyTextStyle400()
+                      .copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

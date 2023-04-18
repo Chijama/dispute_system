@@ -1,16 +1,21 @@
+import 'package:dispute_system/demerit/demerit_model.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:dispute_system/textbox.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
+import 'dart:developer';
 
 class DemeritDetails extends StatefulWidget {
-  const DemeritDetails({super.key});
+  DemeritDataModel? data;
+  DemeritDetails({super.key, this.data});
 
   @override
   State<DemeritDetails> createState() => _DemeritDetailsState();
 }
 
 class _DemeritDetailsState extends State<DemeritDetails> {
-  TextEditingController porterNameController = TextEditingController();
+  late TextEditingController porterNameController;
   TextEditingController offenseController = TextEditingController();
   TextEditingController statusController = TextEditingController();
   TextEditingController pointController = TextEditingController();
@@ -20,6 +25,78 @@ class _DemeritDetailsState extends State<DemeritDetails> {
   TextEditingController levelController = TextEditingController();
   TextEditingController departmentController = TextEditingController();
   TextEditingController reasonController = TextEditingController();
+
+  @override
+  void initState() {
+    porterNameController =
+        TextEditingController(text: widget.data!.porterName.toString());
+    offenseController =
+        TextEditingController(text: widget.data!.offence.toString());
+    statusController =
+        TextEditingController(text: widget.data!.status.toString());
+    pointController =
+        TextEditingController(text: widget.data!.points.toString());
+    hallController = TextEditingController(text: widget.data!.hall.toString());
+    matricController = TextEditingController(
+        text: widget.data!.matriculationNumber.toString());
+    dateController = TextEditingController(text: widget.data!.date.toString());
+    levelController =
+        TextEditingController(text: widget.data!.level.toString());
+    departmentController =
+        TextEditingController(text: widget.data!.department.toString());
+
+    // TODO: implement initState
+    print(widget.data!.department);
+    super.initState();
+  }
+
+  Future dispute() async {
+    showDialog(
+        context: context,
+        builder: (context) => SizedBox(
+              height: 40,
+              width: 40,
+              child: AlertDialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                actions: [
+                  CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor)
+                ],
+                actionsAlignment: MainAxisAlignment.center,
+              ),
+            ));
+    Response r;
+    Map<String, dynamic> body = {
+      'demeritId': widget.data!.id.toString(),
+      'reason': reasonController.text
+    };
+    print(reasonController.text);
+    r = await post(
+      Uri.parse(
+          "https://sddms-backend-production.up.railway.app/api/v1/student/dispute-demerit"),
+      body: body,
+      headers: {
+        "Authorization":
+            "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJud2FpZ2JvMjA5NkBzdHVkZW50LmJhYmNvY2suZWR1Lm5nIiwiaXNzIjoiR2lrby1GWVAiLCJpYXQiOjE2ODE3NTcxODksImp0aSI6IjE3IiwiZXhwIjoxNjgyMzYxOTg5fQ.VmTnVFoKNXTsybNi-gQaufsO4K16MTpOOEssBjHgJYvK_qX5D03mpGso33EJFn9CQPMrZaieL_h2lvH5E-b7oA",
+       // 'Content-type': 'application/json',
+        "Accept": "application/json",
+      },
+    );
+
+    // if (r.statusCode.toString().startsWith('2')) {
+    //   print('good');
+    // }
+
+    Navigator.pop(context);
+    String messsage = json.decode(r.body.toString())['message'].toString();
+    final snackBar = SnackBar(
+      content: Text(messsage),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    print(json.decode(r.body.toString())['message'].toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +153,11 @@ class _DemeritDetailsState extends State<DemeritDetails> {
                                     controller: reasonController,
                                   ),
                                   ElevatedButton(
-                                      onPressed: () {}, child: Text('Dispute'))
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        dispute();
+                                      },
+                                      child: Text('Dispute'))
                                 ],
                               )),
                         );
@@ -94,7 +175,6 @@ class _DemeritDetailsState extends State<DemeritDetails> {
   Widget demeritDetail(String label, TextEditingController controller) {
     return TextFormField(
       readOnly: true,
-      
       style: TextStyles().blackTextStyle700(),
       controller: controller,
       decoration: InputDecoration(

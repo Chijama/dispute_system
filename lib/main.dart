@@ -1,3 +1,4 @@
+import 'package:dispute_system/demerit/demerit_provider.dart';
 import 'package:dispute_system/login/login.dart';
 import 'package:dispute_system/login/login_provider.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,11 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
-        create: (context) => LoginProvider(),
-      ),
+      create: (context) => LoginProvider(),
+    ),
+    ChangeNotifierProvider(
+      create: (context) => DemeritProvider(),
+    ),
   ], child: const MyApp()));
 }
 
