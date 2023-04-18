@@ -62,19 +62,18 @@ class _LoginWidgetState extends State<LoginWidget> {
           "https://sddms-backend-production.up.railway.app/api/v1/auth/student/login"),
       body: body,
     );
-   
 
     if (r.statusCode == 200) {
       if (!mounted) return;
- print(json.decode(r.body).toString());
-    print(json.decode(r.body)['accessToken']);
+      print(json.decode(r.body).toString());
 
-    var state = Provider.of<LoginProvider>(context, listen: false);
-    state.getToken(
-        json.decode(r.body)['accessToken'],
-        json.decode(r.body)['firstName'],
-        json.decode(r.body)['matriculationNumber'],
-        json.decode(r.body)['demerit']);
+
+      var state = Provider.of<LoginProvider>(context, listen: false);
+      state.getToken(
+          json.decode(r.body)['accessToken'],
+          json.decode(r.body)['firstName'],
+          json.decode(r.body)['matriculationNumber'],
+          json.decode(r.body)['demeritPoints']);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const NavBar()),
@@ -217,10 +216,11 @@ class _LoginWidgetState extends State<LoginWidget> {
               ),
               ElevatedButton(
                 onPressed: () {
-                   final form = formKey.currentState;
-                            if (form!.validate()) {
-                              login();
-                            }
+                  final form = formKey.currentState;
+                  if (form!.validate()) {
+                    login();
+                  }
+                  // login();
                 },
                 child: Text(
                   'Login',

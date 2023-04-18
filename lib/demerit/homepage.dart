@@ -1,10 +1,13 @@
-import 'package:dispute_system/demerit_details.dart';
+import 'dart:developer';
+
+import 'package:dispute_system/demerit/demerit_details.dart';
+import 'package:dispute_system/demerit/demerit_model.dart';
 import 'package:dispute_system/login/login_provider.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:provider/provider.dart';
+import 'package:dispute_system/service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,9 +17,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<DemeritDataModel>? demeritData;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    demeritData = Service().getDemeritData(context);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    var state =  Provider.of< LoginProvider>(context, listen: false);
+    var state = Provider.of<LoginProvider>(context, listen: false);
 
     return SafeArea(
       child: Scaffold(
@@ -76,13 +92,33 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Flexible(
                       child: SingleChildScrollView(
-                        child: ListView.builder(
-                            itemCount: 9,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (BuildContext context, int index) {
-                              return const demeritBox();
-                            }),
+                        child: FutureBuilder<DemeritDataModel>(
+                          future: demeritData,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasData) {
+                              if (snapshot.data == null) {
+                                return const Text("Empty");
+                              }
+                            }
+                            DemeritDataModel? demerit = snapshot.data;
+                            return ListView.builder(
+                                itemCount:9,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return demeritBox(
+                                      demerit?.date,
+                                      demerit?.offence,
+                                      demerit?.points,
+                                      demerit?.status.toString());
+                                });
+                          },
+                        ),
                       ),
                     ),
                   ],
@@ -97,9 +133,28 @@ class _HomePageState extends State<HomePage> {
 }
 
 class demeritBox extends StatelessWidget {
-  const demeritBox({
+  const demeritBox(
+    this.date,
+    this.offence,
+    this.points,
+    this.status, {
     super.key,
   });
+  final DateTime? date;
+  final String? offence;
+  final int? points;
+  final String? status;
+
+  Color switchWithString(String status) {
+    if (status.toLowerCase() == 'active') {
+      return Colors.amber;
+    } else if (status.toLowerCase() == 'deleted') {
+      return Colors.red;
+    } else if (status.toLowerCase() == 'resolved') {
+      return Colors.blue;
+    } else
+      return Colors.black;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,23 +176,24 @@ class demeritBox extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '2-10-2022',
+                    date.toString(),
                     style:
                         TextStyles().greyTextStyle400().copyWith(fontSize: 12),
                   ),
+
                   Container(
                     alignment: Alignment.center,
                     height: 31,
                     width: 65,
                     decoration: BoxDecoration(
-                        color: themes().yellowColor.withOpacity(0.2),
+                        color: switchWithString(status!).withOpacity(0.2),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(15))),
                     child: Text(
-                      'pending',
+                      status!,
                       style: TextStyles()
                           .blackTextStyle400()
-                          .copyWith(color: themes().yellowColor, fontSize: 12),
+                          .copyWith(color: switchWithString(status!), fontSize: 12),
                     ),
                   ),
                   // Text(
@@ -155,13 +211,13 @@ class demeritBox extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Chicken',
+                    offence!,
                     style: TextStyles().defaultText(
                         16, FontWeight.w500, themes().secondaryColor),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    '20 points',
+                    '${points} points',
                     style: TextStyles()
                         .darkGreyTextStyle400()
                         .copyWith(fontSize: 12),

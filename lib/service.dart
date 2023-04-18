@@ -12,10 +12,10 @@ class Service{
      try {
       var client = http.Client();
 
-      var url = Uri.parse("https://api305.purscliq.com/api/me");
+      var url = Uri.parse("https://sddms-backend-production.up.railway.app/api/v1/student/demerits/all");
       var loginState = Provider.of<LoginProvider>(context, listen: false);
       var token = loginState.token;
-      log("Login state $token");
+      // log("Login state $token");
       var response = await client.get(
         url,
         headers: {
@@ -30,7 +30,7 @@ class Service{
         //log("returned ${services.toJson()}");
         return services;
       } else {
-        log("failed to fetch users =>${response.statusCode} => ${response.body}");
+        // log("failed to fetch users =>${response.statusCode} => ${response.body}");
         return DemeritDataModel();
       }
     } catch (e) {

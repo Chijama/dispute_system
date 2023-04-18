@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'demerit/homepage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'theme.dart';
-import 'package:dispute_system/dispute.dart';
+import 'package:dispute_system/dispute/dispute.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({Key? key}) : super(key: key);

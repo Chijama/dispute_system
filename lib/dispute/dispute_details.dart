@@ -2,21 +2,24 @@ import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:dispute_system/textbox.dart';
 
-class DemeritDetails extends StatefulWidget {
-  const DemeritDetails({super.key});
+class DisputeDetails extends StatefulWidget {
+  const DisputeDetails({super.key});
 
   @override
-  State<DemeritDetails> createState() => _DemeritDetailsState();
+  State<DisputeDetails> createState() => _DisputeDetailsState();
 }
 
-class _DemeritDetailsState extends State<DemeritDetails> {
+class _DisputeDetailsState extends State<DisputeDetails> {
   TextEditingController porterNameController = TextEditingController();
   TextEditingController offenseController = TextEditingController();
+
   TextEditingController statusController = TextEditingController();
   TextEditingController pointController = TextEditingController();
   TextEditingController hallController = TextEditingController();
   TextEditingController matricController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
+  TextEditingController dateDisputedController = TextEditingController();
+  TextEditingController dateDemeritedController = TextEditingController();
+
   TextEditingController levelController = TextEditingController();
   TextEditingController departmentController = TextEditingController();
   TextEditingController reasonController = TextEditingController();
@@ -38,7 +41,7 @@ class _DemeritDetailsState extends State<DemeritDetails> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Demerit Details',
+          'Dispute Details',
           style: TextStyles().blackTextStyle700(),
         ),
         backgroundColor: Colors.transparent,
@@ -47,14 +50,16 @@ class _DemeritDetailsState extends State<DemeritDetails> {
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(children: [
-            demeritDetail('Date Created', dateController),
-            demeritDetail('Points', pointController),
-            demeritDetail("Porter's Name", porterNameController),
-            demeritDetail('Matric', matricController),
-            demeritDetail('Level', levelController),
-            demeritDetail('Offense', offenseController),
-            demeritDetail('Status', statusController),
-            demeritDetail('Department', departmentController),
+            disputeDetail('Date Demeritted', dateDemeritedController),
+            disputeDetail('Date Disputed', dateDisputedController),
+            disputeDetail('Points', pointController),
+            disputeDetail("Porter's Name", porterNameController),
+            disputeDetail('Matric', matricController),
+            disputeDetail('Level', levelController),
+            disputeDetail('Offense', offenseController),
+            disputeDetail('Reason', reasonController),
+            disputeDetail('Status', statusController),
+            disputeDetail('Department', departmentController),
             const SizedBox(height: 30),
             ElevatedButton(
                 onPressed: () {
@@ -71,19 +76,19 @@ class _DemeritDetailsState extends State<DemeritDetails> {
                                 children: [
                                   MainTextInput(
                                     labelText: 'Enter reason...',
-                                    mainText: 'Reason for Dispute',
+                                    mainText: 'Reason for Escalation',
                                     maxLine: 5,
                                     controller: reasonController,
                                   ),
                                   ElevatedButton(
-                                      onPressed: () {}, child: Text('Dispute'))
+                                      onPressed: () {}, child: Text('Escalate'))
                                 ],
                               )),
                         );
                       });
                 },
                 child: const Text(
-                  'Dispute',
+                  'Escalate',
                 ))
           ]),
         ),
@@ -91,16 +96,9 @@ class _DemeritDetailsState extends State<DemeritDetails> {
     ));
   }
 
-  Widget demeritDetail(String label, TextEditingController controller) {
+  Widget disputeDetail(String label, TextEditingController controller) {
     return TextFormField(
       readOnly: true,
-      validator: (title) {
-        if (title!.isEmpty) {
-          return 'Please enter a title';
-        } else {
-          return null;
-        }
-      },
       style: TextStyles().blackTextStyle700(),
       controller: controller,
       decoration: InputDecoration(

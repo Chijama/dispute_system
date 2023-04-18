@@ -1,7 +1,9 @@
+import 'package:dispute_system/dispute/dispute_details.dart';
 import 'package:dispute_system/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
+import 'dart:developer';
 
 class DisputeWidget extends StatefulWidget {
   const DisputeWidget({super.key});
@@ -11,6 +13,31 @@ class DisputeWidget extends StatefulWidget {
 }
 
 class _DisputeWidgetState extends State<DisputeWidget> {
+  final TextEditingController reasonController = TextEditingController();
+
+  Future escalate() async {
+    showDialog(
+        context: context,
+        builder: (context) => SizedBox(
+              height: 40,
+              width: 40,
+              child: AlertDialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                actions: [
+                  CircularProgressIndicator(
+                      color: Theme.of(context).primaryColor)
+                ],
+                actionsAlignment: MainAxisAlignment.center,
+              ),
+            ));
+    Response r;
+    Map<String, dynamic> body = {
+      'demeritId':demeritId,
+      'reason': reasonController.text
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -85,7 +112,12 @@ class demeritBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute<Widget>(
+                builder: (BuildContext context) => const DisputeDetails()));
+      },
       child: Card(
         elevation: 4,
         child: Container(
