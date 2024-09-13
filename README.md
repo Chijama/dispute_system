@@ -1,8 +1,8 @@
 # dispute_system
 
-# interactiveresume
+ 
 
-This Application is a dispute system targeting Babcock university developed as a proof of concept
+This Application is a dispute system targeting Babcock University developed as a proof of concept
 
 
 The libraries used in this projects are:
