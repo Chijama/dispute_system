@@ -2,7 +2,7 @@
 
  
 
-This Application is a dispute system targeting Babcock University developed as a proof of concept
+This Application is a dispute and demerit system for Babcock University students developed as a proof of concept
 
 
 The libraries used in this projects are:
@@ -13,8 +13,8 @@ The libraries used in this projects are:
 - http for making HTTP requests
 - provider to manage the state of the app
 
-Future Features to consider :
-- None for now
+![demerit](https://github.com/user-attachments/assets/99aa71c4-709a-4749-a09a-eb88c443ffed)
+
 
 Link to APK - https://appetize.io/app/wisbqdztuxdxka2od2223levu4
 
